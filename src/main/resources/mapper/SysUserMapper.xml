@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+        "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.javaclimb.club.dao.SysUserMapper">
+    <resultMap id="BaseResultMap" type="com.javaclimb.club.domain.SysUser">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="password" jdbcType="VARCHAR" property="password"/>
+        <result column="flag" jdbcType="VARCHAR" property="flag"/>
+        <result column="addr" jdbcType="VARCHAR" property="addr"/>
+        <result column="college" jdbcType="VARCHAR" property="college"/>
+        <result column="stude_class" jdbcType="VARCHAR" property="studeClass"/>
+        <result column="phone" jdbcType="VARCHAR" property="phone"/>
+        <result column="no" jdbcType="VARCHAR" property="no"/>
+    </resultMap>
+
+    <select id="verifyPassword" resultMap="BaseResultMap">
+        select *
+        from sys_user
+        where no = #{no}
+          and password = #{password}
+    </select>
+
+    <select id="getUserList" resultMap="BaseResultMap" parameterType="com.javaclimb.club.domain.SysUser">
+        select * from sys_user
+        <where>
+            <if test="no != null and no != ''">
+                and no like concat('%',#{no},'%')
+            </if>
+            <if test="name != null and name != ''">
+                and name like concat('%',#{name},'%')
+            </if>
+            <if test="flag != null and flag != ''">
+                and flag = #{flag}
+            </if>
+        </where>
+        order by id desc
+    </select>
+</mapper>

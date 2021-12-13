@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.javaclimb.club.dao.ActiveUserMapper">
+    <resultMap id="BaseResultMap" type="com.javaclimb.club.domain.ActiveUser">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="user_id" jdbcType="INTEGER" property="userId"/>
+        <result column="active_id" jdbcType="INTEGER" property="activeId"/>
+        <result column="crt_time" jdbcType="TIMESTAMP" property="crtTime"/>
+        <result column="back" jdbcType="VARCHAR" property="back"/>
+    </resultMap>
+
+    <select id="myActiveUserList" resultType="com.javaclimb.club.domain.vo.MyActiveVO"
+            parameterType="com.javaclimb.club.domain.form.ActiveUserForm">
+        select au.id id,
+        a.name name,
+        a.content content,
+        a.active_time activeTime,
+        a.crt_time crtTime,
+        a.crt_id crtId,
+        a.crt_name crtName,
+        au.id flag,
+        au.crt_time joinTime
+        from active a
+        join active_user au on (a.id = au.active_id and au.user_id = #{userId})
+        left join sys_user su on au.user_id = su.id
+        <where>
+            <if test="userName != null and userName != ''">
+                and a.name like concat('%',#{userName},'%')
+            </if>
+        </where>
+        order by au.crt_time desc
+    </select>
+
+    <select id="getActiveUserList" resultType="com.javaclimb.club.domain.vo.ActiveUserVO"
+            parameterType="com.javaclimb.club.domain.form.ActiveUserForm">
+        select au.id id,
+        su.stude_class studeClass,
+        au.crt_time crtTime,
+        su.*
+        from active_user au join sys_user su on au.user_id = su.id
+        where au.active_id = #{activeId}
+        <if test="userName != null and userName != ''">
+            and su.name like concat('%',#{userName},'%')
+        </if>
+        order by au.crt_time desc
+    </select>
+</mapper>

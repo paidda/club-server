@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.javaclimb.club.dao.ClubMapper">
+    <resultMap id="BaseResultMap" type="com.javaclimb.club.domain.Club">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="content" jdbcType="VARCHAR" property="content"/>
+        <result column="stop" jdbcType="VARCHAR" property="stop"/>
+        <result column="crt_time" jdbcType="TIMESTAMP" property="crtTime"/>
+    </resultMap>
+
+    <select id="getClubList" resultType="com.javaclimb.club.domain.vo.ClubVO"
+            parameterType="com.javaclimb.club.domain.form.ClubForm">
+        select c.*, c.name name, c.crt_time crtTime, s.id userId, s.name userName, uc.id flag from club c
+        left join club_user u on (c.id = u.club_id and u.leader = '1')
+        left join sys_user s on (u.user_id = s.id)
+        left join club_user uc on (c.id = uc.club_id and uc.user_id = #{userId})
+        <where>
+            <if test="name != null and name != ''">
+                and c.name like concat('%',#{name},'%')
+            </if>
+            <if test="stop != null and stop != ''">
+                and c.stop = #{stop}
+            </if>
+        </where>
+        order by c.crt_time desc
+    </select>
+
+    <select id="getMyClubList" resultType="com.javaclimb.club.domain.vo.ClubVO"
+            parameterType="com.javaclimb.club.domain.form.ClubForm">
+        select
+        uc.id id,
+        c.*, c.name name,
+        uc.crt_time crtTime,
+        s.id userId,
+        s.name userName,
+        uc.id flag,
+        uc.leader,
+        uc.pass
+        from club c
+        join club_user uc on (c.id = uc.club_id and uc.user_id = #{userId})
+        left join sys_user s on (uc.user_id = s.id)
+        <where>
+            <if test="name != null and name != ''">
+                and c.name like concat('%',#{name},'%')
+            </if>
+            <if test="stop != null and stop != ''">
+                and c.stop = #{stop}
+            </if>
+        </where>
+        order by c.crt_time desc
+    </select>
+</mapper>

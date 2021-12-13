@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.javaclimb.club.dao.ActiveMapper">
+    <resultMap id="BaseResultMap" type="com.javaclimb.club.domain.Active">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="content" jdbcType="VARCHAR" property="content"/>
+        <result column="active_time" jdbcType="TIMESTAMP" property="activeTime"/>
+        <result column="crt_id" jdbcType="INTEGER" property="crtId"/>
+        <result column="crt_name" jdbcType="INTEGER" property="crtName"/>
+        <result column="crt_time" jdbcType="TIMESTAMP" property="crtTime"/>
+    </resultMap>
+
+    <select id="getActiveList" resultType="com.javaclimb.club.domain.vo.ActiveVO"
+            parameterType="com.javaclimb.club.domain.form.ActiveForm">
+        select a.id id,
+        a.name name,
+        a.content content,
+        a.active_time activeTime,
+        a.crt_time crtTime,
+        a.crt_id crtId,
+        a.crt_name crtName,
+        au.id flag
+        from active a
+        left join active_user au on (a.id = au.active_id and au.user_id = #{userId})
+        left join sys_user su on au.user_id = su.id
+        <where>
+            <if test="name != null and name != ''">
+                and a.name like concat('%',#{name},'%')
+            </if>
+        </where>
+        order by a.crt_time desc
+    </select>
+</mapper>

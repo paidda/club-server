@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.javaclimb.club.dao.ClubUserMapper">
+    <resultMap id="BaseResultMap" type="com.javaclimb.club.domain.ClubUser">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="user_id" jdbcType="INTEGER" property="userId"/>
+        <result column="club_id" jdbcType="INTEGER" property="clubId"/>
+        <result column="pass" jdbcType="VARCHAR" property="pass"/>
+        <result column="crt_time" jdbcType="TIMESTAMP" property="crtTime"/>
+        <result column="back" jdbcType="VARCHAR" property="back"/>
+        <result column="leader" jdbcType="VARCHAR" property="leader"/>
+    </resultMap>
+
+    <update id="deleteOldLeader" parameterType="com.javaclimb.club.domain.ClubUser">
+        update club_user
+        set leader = '0'
+        where club_id = #{clubId}
+    </update>
+
+    <select id="getClubUserList" resultType="com.javaclimb.club.domain.vo.ClubUserVO"
+            parameterType="com.javaclimb.club.domain.form.ClubUserForm">
+        select cu.id         id,
+               s.stude_class studeClass,
+               cu.user_id    userId,
+               cu.club_id    clubId,
+               cu.crt_time   crtTime,
+               s.*,
+               cu.*
+        from club_user cu,
+             sys_user s
+        where cu.user_id = s.id
+          and cu.club_id = #{clubId}
+        <if test="userName != null and userName != ''">
+            and s.name like concat('%',#{userName},'%')
+        </if>
+        order by cu.crt_time desc
+    </select>
+</mapper>
